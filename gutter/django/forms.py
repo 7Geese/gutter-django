@@ -1,16 +1,15 @@
-from django import forms
-from django.core.validators import RegexValidator
-from django.forms.formsets import formset_factory, BaseFormSet
-from django.forms.widgets import Select, Textarea
-from django.utils.html import escape, conditional_escape
-from django.utils.encoding import force_unicode
-
+from functools import partial
 from itertools import chain
 
-from gutter.django.registry import operators, arguments
-from gutter.client.models import Switch, Condition
+from django import forms
+from django.core.validators import RegexValidator
+from django.forms.formsets import BaseFormSet, formset_factory
+from django.forms.widgets import Select, Textarea
+from django.utils.encoding import force_text
+from django.utils.html import conditional_escape, escape
 
-from functools import partial
+from gutter.client.models import Condition, Switch
+from gutter.django.registry import arguments, operators
 
 
 class OperatorSelectWidget(Select):
@@ -21,20 +20,20 @@ class OperatorSelectWidget(Select):
 
     def render_options(self, selected_choices):
         def render_option(option_value, option_label):
-            option_value = force_unicode(option_value)
+            option_value = force_text(option_value)
             selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
             return u'<option data-arguments="%s" value="%s"%s>%s</option>' % (
                 ','.join(self.arguments[option_value]),
                 escape(option_value), selected_html,
-                conditional_escape(force_unicode(option_label)))
+                conditional_escape(force_text(option_label)))
 
         # Normalize to strings.
-        selected_choices = set([force_unicode(v) for v in selected_choices])
+        selected_choices = set([force_text(v) for v in selected_choices])
         output = []
 
         for option_value, option_label in self.choices:
             if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
                 for option in option_label:
                     output.append(render_option(*option))
                 output.append(u'</optgroup>')
