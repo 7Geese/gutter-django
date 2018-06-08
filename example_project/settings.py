@@ -108,7 +108,7 @@ INSTALLED_APPS = (
 
 try:
     from local_settings import *
-except ImportError, e:
-    print e
+except ImportError as e:
+    print(e)
 
 TEMPLATE_STRING_IF_INVALID = "He's dead Jim! [%s]"

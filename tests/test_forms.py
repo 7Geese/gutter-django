@@ -65,10 +65,10 @@ class SwitchFormIntegrationTest(SetupDjangoTest, Exam, unittest2.TestCase):
     @fixture
     def post_data(self):
         return {
-            u'name': u'name',
-            u'description': u'description',
-            u'state': u'1',
-            u'label': u'label',
+            'name': 'name',
+            'description': 'description',
+            'state': '1',
+            'label': 'label',
         }
 
     @fixture
@@ -163,7 +163,7 @@ class ConditionSetFormTest(Exam, unittest2.TestCase):
         )
 
     def assertInitialValue(self, forms_index, argument_name, initial):
-        self.assertEquals(
+        self.assertEqual(
             self.formset.forms[forms_index].fields[argument_name].initial,
             initial
         )
@@ -176,29 +176,29 @@ class ConditionSetFormTest(Exam, unittest2.TestCase):
         self.assertIsCharField(2, '3b')
 
     def test_sets_the_initial_value_for_each_field(self):
-        self.assertEquals(self.field_at(0, '1a').initial, '1aval')
-        self.assertEquals(self.field_at(0, '1b').initial, '1bval')
-        self.assertEquals(self.field_at(1, '2a').initial, '2aval')
-        self.assertEquals(self.field_at(2, '3a').initial, '3aval')
-        self.assertEquals(self.field_at(2, '3b').initial, '3bval')
+        self.assertEqual(self.field_at(0, '1a').initial, '1aval')
+        self.assertEqual(self.field_at(0, '1b').initial, '1bval')
+        self.assertEqual(self.field_at(1, '2a').initial, '2aval')
+        self.assertEqual(self.field_at(2, '3a').initial, '3aval')
+        self.assertEqual(self.field_at(2, '3b').initial, '3bval')
 
 
 class ConditionFormSetIntegrationTest(SetupDjangoTest, Exam, unittest2.TestCase):
 
     post_data = {
-        u'form-MAX_NUM_FORMS': u'',
-        u'form-TOTAL_FORMS': u'2',
-        u'form-INITIAL_FORMS': u'2',
+        'form-MAX_NUM_FORMS': '',
+        'form-TOTAL_FORMS': '2',
+        'form-INITIAL_FORMS': '2',
 
-        u'form-0-argument': u'User.name',
-        u'form-0-operator': u'equals',
-        u'form-0-negative': u'1',
-        u'form-0-value': u'Jeff',
+        'form-0-argument': 'User.name',
+        'form-0-operator': 'equals',
+        'form-0-negative': '1',
+        'form-0-value': 'Jeff',
 
-        u'form-1-argument': u'User.age',
-        u'form-1-operator': u'more_than',
-        u'form-1-negative': u'0',
-        u'form-1-lower_limit': u'21',
+        'form-1-argument': 'User.age',
+        'form-1-operator': 'more_than',
+        'form-1-negative': '0',
+        'form-1-lower_limit': '21',
     }
 
     @fixture

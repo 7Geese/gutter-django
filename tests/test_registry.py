@@ -41,7 +41,7 @@ class TestRegistry(Exam, unittest2.TestCase):
     def test_can_register_operators(self):
         new_operators = dict(operator=sentinel.operator)
 
-        [self.assertNotIn(operator, registry.operators) for operator in new_operators.keys()]
+        [self.assertNotIn(operator, registry.operators) for operator in list(new_operators.keys())]
         registry.operators.register(sentinel.operator)
         self.assertDictContainsSubset(new_operators, registry.operators)
 

@@ -5,6 +5,8 @@ gutter.templatetags.gutter_helpers
 :copyright: (c) 2010 DISQUS.
 :license: Apache License 2.0, see LICENSE for more details.
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import re
 
 from django import template
@@ -32,9 +34,9 @@ def raw(parser, token):
     while parser.tokens:
         token = parser.next_token()
         if token.token_type == template.TOKEN_BLOCK and token.contents == parse_until:
-            return template.TextNode(u''.join(text))
+            return template.TextNode(''.join(text))
         start, end = tag_mapping[token.token_type]
-        text.append(u'%s%s%s' % (start, token.contents, end))
+        text.append('%s%s%s' % (start, token.contents, end))
     parser.unclosed_block_tag(parse_until)
 raw = register.tag(raw)
 

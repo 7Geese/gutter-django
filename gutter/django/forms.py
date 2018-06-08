@@ -1,5 +1,6 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from functools import partial
-from itertools import chain
 
 from django import forms
 from django.core.validators import RegexValidator
@@ -7,8 +8,8 @@ from django.forms.formsets import BaseFormSet, formset_factory
 from django.forms.widgets import Select, Textarea
 from django.utils.encoding import force_text
 from django.utils.html import conditional_escape, escape
-
 from gutter.client.models import Condition, Switch
+
 from gutter.django.registry import arguments, operators
 
 
@@ -21,8 +22,8 @@ class OperatorSelectWidget(Select):
     def render_options(self, selected_choices):
         def render_option(option_value, option_label):
             option_value = force_text(option_value)
-            selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
-            return u'<option data-arguments="%s" value="%s"%s>%s</option>' % (
+            selected_html = (option_value in selected_choices) and ' selected="selected"' or ''
+            return '<option data-arguments="%s" value="%s"%s>%s</option>' % (
                 ','.join(self.arguments[option_value]),
                 escape(option_value), selected_html,
                 conditional_escape(force_text(option_label)))
@@ -33,18 +34,18 @@ class OperatorSelectWidget(Select):
 
         for option_value, option_label in self.choices:
             if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
+                output.append('<optgroup label="%s">' % escape(force_text(option_value)))
                 for option in option_label:
                     output.append(render_option(*option))
-                output.append(u'</optgroup>')
+                output.append('</optgroup>')
             else:
                 output.append(render_option(option_value, option_label))
-        return u'\n'.join(output)
+        return '\n'.join(output)
 
 
 class SwitchForm(forms.Form):
 
-    STATES = {1: 'Disabled', 2: 'Selective', 3: 'Global'}.items()
+    STATES = list({1: 'Disabled', 2: 'Selective', 3: 'Global'}.items())
     SWITCH_NAME_REGEX_VALIDATOR = RegexValidator(
         regex=r'^[\w_:]+$',
         message='Must only be alphanumeric, underscore, and colon characters.'
@@ -75,7 +76,7 @@ class SwitchForm(forms.Form):
 
         instance = cls(initial=data)
 
-        condition_dicts = map(ConditionForm.to_dict, switch.conditions)
+        condition_dicts = [ConditionForm.to_dict(c) for c in switch.conditions]
         instance.conditions = ConditionFormSet(initial=condition_dicts)
         instance.fields['name'].widget.attrs['readonly'] = True
 
@@ -126,7 +127,7 @@ class BaseConditionFormSet(BaseFormSet):
 
     @property
     def to_objects(self):
-        return map(self.__make_condition, self.forms)
+        return [self.__make_condition(f) for f in self.forms]
 
     def __make_condition(self, form):
         data = form.cleaned_data.copy()

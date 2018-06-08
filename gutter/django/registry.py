@@ -1,17 +1,20 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+from itertools import groupby
+from operator import attrgetter, itemgetter
+
+import six
 from gutter.client.operators.comparable import *  # noqa
 from gutter.client.operators.identity import *  # noqa
 from gutter.client.operators.misc import *  # noqa
 from gutter.client.operators.string import *  # noqa
 
-from itertools import groupby
-
-from operator import attrgetter, itemgetter
-
 
 class OperatorsDict(dict):
 
     def __init__(self, *operators):
-        map(self.register, operators)
+        for op in operators:
+            self.register(op)
 
     def register(self, operator):
         self[operator.name] = operator
@@ -38,7 +41,7 @@ class ArgumentsDict(dict):
 
     @property
     def as_choices(self):
-        sorted_strings = sorted(map(str, self.values()))
+        sorted_strings = sorted(map(six.text_type, self.values()))
         extract_classname = lambda a: a.split('.')[0]
 
         grouped = groupby(sorted_strings, extract_classname)
@@ -48,7 +51,7 @@ class ArgumentsDict(dict):
             groups.setdefault(name, [])
             groups[name].extend((a, a) for a in arguments)
 
-        return groups.items()
+        return list(groups.items())
 
     def register(self, argument):
         self[str(argument)] = argument

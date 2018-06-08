@@ -5,8 +5,7 @@ gutter.nexus_modules
 :copyright: (c) 2010 DISQUS.
 :license: Apache License 2.0, see LICENSE for more details.
 """
-
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import base64
 import os
@@ -14,9 +13,9 @@ import pickle
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from gutter.client import get_gutter_client
 import nexus
 
-from gutter.client import get_gutter_client
 from gutter.django.forms import SwitchForm, ConditionFormSet, SwitchFormManager
 
 manager = get_gutter_client()
@@ -48,11 +47,7 @@ class GutterModule(nexus.NexusModule):
         return 'Gutter'
 
     def get_urls(self):
-        try:
-            from django.conf.urls import url
-        except ImportError:
-            from django.conf.urls.defaults import url
-
+        from django.conf.urls import url
         urlpatterns = [
             url(r'^update/$', self.as_view(self.update), name='update'),
             url(r'^export/$', self.as_view(self.export_switches), name='export'),
@@ -67,7 +62,7 @@ class GutterModule(nexus.NexusModule):
 
     @property
     def __index_context(self):
-        switches = map(SwitchForm.from_object, manager.switches)
+        switches = [SwitchForm.from_object(s) for s in manager.switches]
         switches = sorted(switches, key=lambda x: x.field('name'))
 
         new_switch = SwitchForm()

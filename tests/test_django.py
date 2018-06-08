@@ -9,4 +9,4 @@ class WebTest(Exam, unittest2.TestCase):
 
     def test_autodiscover_is_autodiscovery_discover(self):
         from gutter.django.autodiscovery import discover
-        self.assertEquals(autodiscover, discover)
+        self.assertEqual(autodiscover, discover)
