@@ -126,6 +126,13 @@ class GutterModule(nexus.NexusModule):
         return response
 
     def import_switches(self, request):
+        if not request.user.is_superuser:
+            text = 'Must be superuser to import switches'
+            response = HttpResponse(text)
+            response['Content-Type'] = 'text/plain'
+            response['Content-Length'] = len(text)
+            return response
+
         encoded_switches = request.POST.get('switch_block', '')
         switch_block = encoded_switches.split('\r\n')
 
