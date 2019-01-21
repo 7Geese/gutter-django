@@ -15,32 +15,23 @@ from gutter.django.registry import arguments, operators
 
 class OperatorSelectWidget(Select):
 
+    # Need to set `option_inherits_attrs`, otherwise Django throws away any `attrs`
+    # we add in `create_option`.
+    option_inherits_attrs = True
+
     def __init__(self, arguments, *args, **kwargs):
         self.arguments = arguments
         super(OperatorSelectWidget, self).__init__(*args, **kwargs)
 
-    def render_options(self, selected_choices):
-        def render_option(option_value, option_label):
-            option_value = force_text(option_value)
-            selected_html = (option_value in selected_choices) and ' selected="selected"' or ''
-            return '<option data-arguments="%s" value="%s"%s>%s</option>' % (
-                ','.join(self.arguments[option_value]),
-                escape(option_value), selected_html,
-                conditional_escape(force_text(option_label)))
+    def get_context(self, name, value, attrs):
+        context = super(OperatorSelectWidget, self).get_context(name, value, attrs)
+        return context
 
-        # Normalize to strings.
-        selected_choices = set([force_text(v) for v in selected_choices])
-        output = []
-
-        for option_value, option_label in self.choices:
-            if isinstance(option_label, (list, tuple)):
-                output.append('<optgroup label="%s">' % escape(force_text(option_value)))
-                for option in option_label:
-                    output.append(render_option(*option))
-                output.append('</optgroup>')
-            else:
-                output.append(render_option(option_value, option_label))
-        return '\n'.join(output)
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        if attrs is None:
+            attrs = {}
+        attrs['data-arguments'] = ','.join(self.arguments[value])
+        return super(OperatorSelectWidget, self).create_option(name, value, label, selected, index, subindex, attrs)
 
 
 class SwitchForm(forms.Form):
