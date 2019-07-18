@@ -23,7 +23,7 @@ dependency_links = [
 install_requires = [
     'nexus-yplan>=1.3.1',
     'gutter>=0.1.1',
-    'django<2',
+    'django',
 ]
 
 setup_requires = []
