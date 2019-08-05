@@ -110,7 +110,9 @@ class GutterModule(nexus.NexusModule):
         else:
             switches = manager.switches
 
-        pickled_switches = pickle.dumps(switches)
+        # protocol `2` is currently the highest supported by python 2. Use that while we migrate
+        # over from Python 3 to Python 2 so that we can support both simultaneously.
+        pickled_switches = pickle.dumps(switches, protocol=2)
         encoded_switches = base64.b64encode(pickled_switches).decode('utf-8')
 
         switch_block = [encoded_switches[i:i + 64] for i in range(0, len(encoded_switches), 64)]
@@ -126,8 +128,10 @@ class GutterModule(nexus.NexusModule):
         return response
 
     def import_switches(self, request):
+        # User input is unpickled here, which allows you to execute arbitrary code on the server.
+        # So, let's only let superusers import switches.
         if not request.user.is_superuser:
-            text = 'Must be superuser to import switches'
+            text = 'Only superusers can import switches'
             response = HttpResponse(text)
             response['Content-Type'] = 'text/plain'
             response['Content-Length'] = len(text)
