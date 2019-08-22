@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import base64
 import os
 import pickle
+import sys
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -146,7 +147,8 @@ class GutterModule(nexus.NexusModule):
         switch_block = ''.join(switch_block[1:-1])
 
         pickled_switches = base64.b64decode(switch_block)
-        switches = pickle.loads(pickled_switches)
+        kwargs = {'encoding': 'latin1'} if sys.version_info[0] > 2 else {}
+        switches = pickle.loads(pickled_switches, **kwargs)
 
         for switch in switches:
             try:
